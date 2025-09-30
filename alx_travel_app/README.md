@@ -59,20 +59,32 @@ python manage.py seed
 
 This will create:
 
-Sample listings (hotels, destinations)
+- Sample listings (hotels, destinations)
+- Example bookings tied to listings
+- Reviews with random ratings
 
-Example bookings tied to listings
+## API Endpoints
 
-Reviews with random ratings
+- GET /api/listings/
+- POST /api/listings/
+- GET /api/listings/{id}/
+- PUT /api/listings/{id}/
+- DELETE /api/listings/{id}/
 
-🔑 API Endpoints
-Method Endpoint Description
-GET /api/listings/ Fetch all listings
-POST /api/listings/ Create a listing
-GET /api/bookings/ Fetch all bookings
-POST /api/bookings/ Create a booking
-GET /api/reviews/ Fetch all reviews
-POST /api/reviews/ Create a review
+- GET /api/bookings/
+- POST /api/bookings/
+- GET /api/bookings/{id}/
+- PUT /api/bookings/{id}/
+- DELETE /api/bookings/{id}/
+
+- GET /api/reviews/
+- POST /api/reviews/
+- GET /api/reviews/{id}/
+- PUT /api/reviews/{id}/
+- DELETE /api/reviews/{id}/
+
+Swagger: /api/swagger/
+
 🛠️ Tech Stack
 
 Backend: Django, Django REST Framework
@@ -91,13 +103,10 @@ Management: Custom Django commands for seeding
 
 You can deploy this app to:
 
-Heroku
-
-Render
-
-Railway
-
-Docker
+- Heroku
+- Render
+- Railway
+- Docker
 
 (Add deployment instructions if you set this up.)
 
@@ -105,6 +114,5 @@ Docker
 
 Developed by Ufuoma Ogedegbe 🚀
 
-Portfolio: ufuosMernPortfolio.onrender.com
-
+Portfolio: ufuosMernPortfolio.onrender.com  
 GitHub: @ufuos
