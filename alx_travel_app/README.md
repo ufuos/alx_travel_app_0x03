@@ -1,118 +1,71 @@
-🧳 ALX_TRAVEL_APP
 
-ALX_TRAVEL_APP is a Django + Django REST Framework project that powers a travel platform.
-It supports Listings (places to book), Bookings, and Reviews, with management commands for database seeding.
+# alx_travel_app (alx_travel_app_0x02)
 
-✨ Features
+## Chapa Payment Integration
 
-🏨 Listings: Create, view, and manage travel listings.
+### Setup
+1. Create .env with:
+   - CHAPA_SECRET_KEY
+   - CELERY_BROKER_URL
+   - EMAIL settings
 
-📅 Bookings: Manage reservations tied to listings.
+2. Install deps:
+pip install -r requirements.txt
 
-⭐ Reviews: Users can add reviews for listings.
+markdown
+Copy code
 
-⚙️ Database Seeding: Seed the database with sample listings, bookings, and reviews via a management command.
+3. Run migrations:
+python manage.py migrate
 
-🔐 API-Ready: Built with Django REST Framework for easy API consumption.
+markdown
+Copy code
 
-📂 Project Structure
-alx_travel_app/
-├── alx_travel_app/ # Main project settings
-├── listings/ # Core app with models, views, serializers
-│ ├── models.py # Listing, Booking, Review models
-│ ├── serializers.py # API serializers
-│ ├── views.py # API views
-│ ├── management/
-│ │ ├── commands/
-│ │ │ └── seed.py # Custom command for seeding data
-├── requirements.txt # Project dependencies
-├── manage.py # Django project manager
+4. Start services:
+redis-server
+python manage.py runserver
+celery -A project_name worker -l info
 
-⚡ Installation & Setup
+markdown
+Copy code
 
-1. Clone the repo
-   git clone https://github.com/your-username/ALX_TRAVEL_APP.git
-   cd ALX_TRAVEL_APP
+### Testing
+- POST to `/api/listings/chapa/initiate/` with `booking_id` and `amount`.
+- Open returned `checkout_url` and complete sandbox payment.
+- Verify via `/api/listings/chapa/verify/?tx_ref=...`
 
-2. Create a virtual environment
-   python3 -m venv venv
-   source venv/bin/activate # Mac/Linux
-   venv\Scripts\activate # Windows
+### Notes
+- This repo is `alx_travel_app_0x02` — DO NOT push to `alx_travel_app_0x01`.
+13 — Git: duplicate project and push to alx_travel_app_0x02 (exact commands)
+If you already have alx_travel_app_0x01 locally and want to create alx_travel_app_0x02 with the new changes:
 
-3. Install dependencies
-   pip install -r requirements.txt
+Clone the original repo (if you only have remote):
 
-4. Run migrations
-   python manage.py migrate
+bash
+Copy code
+git clone https://github.com/yourusername/alx_travel_app_0x01.git alx_travel_app_0x02
+cd alx_travel_app_0x02
+(Optional) Remove the existing remote origin and create a fresh repo locally:
 
-5. Create superuser (admin access)
-   python manage.py createsuperuser
+bash
+Copy code
+# remove origin that points to 0x01
+git remote remove origin
+Create a new GitHub repository named alx_travel_app_0x02 on GitHub (use the website UI). Copy the new repo URL (HTTPS or SSH).
 
-6. Run the development server
-   python manage.py runserver
+Add the new remote and push:
 
-🌱 Database Seeding
+bash
+Copy code
+# replace <NEW_REPO_URL> with your alx_travel_app_0x02 URL
+git remote add origin https://github.com/yourusername/alx_travel_app_0x02.git
+git branch -M main
+git push -u origin main
+If you already made changes, commit them before pushing:
 
-You can populate the database with demo listings, bookings, and reviews using the custom seed command:
-
-python manage.py seed
-
-This will create:
-
-- Sample listings (hotels, destinations)
-- Example bookings tied to listings
-- Reviews with random ratings
-
-## API Endpoints
-
-- GET /api/listings/
-- POST /api/listings/
-- GET /api/listings/{id}/
-- PUT /api/listings/{id}/
-- DELETE /api/listings/{id}/
-
-- GET /api/bookings/
-- POST /api/bookings/
-- GET /api/bookings/{id}/
-- PUT /api/bookings/{id}/
-- DELETE /api/bookings/{id}/
-
-- GET /api/reviews/
-- POST /api/reviews/
-- GET /api/reviews/{id}/
-- PUT /api/reviews/{id}/
-- DELETE /api/reviews/{id}/
-
-Swagger: /api/swagger/
-
-🛠️ Tech Stack
-
-Backend: Django, Django REST Framework
-
-Database: PostgreSQL (can be swapped with SQLite/MySQL)
-
-Auth: Django default authentication system
-
-Management: Custom Django commands for seeding
-
-📸 Screenshots
-
-(Add screenshots here of your API responses, Django Admin, or Swagger UI if added)
-
-🚀 Deployment
-
-You can deploy this app to:
-
-- Heroku
-- Render
-- Railway
-- Docker
-
-(Add deployment instructions if you set this up.)
-
-👨‍💻 Author
-
-Developed by Ufuoma Ogedegbe 🚀
-
-Portfolio: ufuosMernPortfolio.onrender.com  
-GitHub: @ufuos
+bash
+Copy code
+git add .
+git commit -m "Add Chapa payment integration: Payment model, views, tasks, README"
+git push origin main
+Important: These commands remove any reference to the old alx_travel_app_0x01 remote, so pushing will go only to alx_travel_app_0x02. Double-check git remote -v to ensure it points to the new repo before pushing.
