@@ -1,6 +1,27 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.utils import timezone
+
+class Payment(models.Model):
+    STATUS_CHOICES = (
+        ('PENDING', 'Pending'),
+        ('COMPLETED', 'Completed'),
+        ('FAILED', 'Failed'),
+    )
+
+    booking = models.ForeignKey('bookings.Booking', on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)  # currency units
+    currency = models.CharField(max_length=10, default='ETB')  # or 'USD' etc.
+    tx_ref = models.CharField(max_length=255, unique=True)  # merchant reference (our side)
+    chapa_tx = models.CharField(max_length=255, blank=True, null=True)  # chapa transaction id / reference
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.booking} - {self.tx_ref} - {self.status}"
 
 
 class Listing(models.Model):
