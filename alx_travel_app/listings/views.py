@@ -1,4 +1,3 @@
-# listings/views.py
 import uuid
 import requests
 from django.conf import settings
@@ -9,10 +8,10 @@ from rest_framework.response import Response
 from .models import Listing, Booking, Payment
 from .serializers import ListingSerializer, BookingSerializer
 from bookings.models import Booking as BookingModel  # adjust import if needed
-from .tasks import send_payment_confirmation_email  # Celery task for email
+from .tasks import send_payment_confirmation_email  # Celery task for payment email
+from bookings.tasks import send_booking_confirmation_email  # Celery task for booking email
 
 CHAPA_BASE = "https://api.chapa.co/v1"  # base URL (sandbox & live use same API base)
-
 
 # ---------------------- CRUD VIEWSETS ----------------------
 
@@ -27,12 +26,29 @@ class ListingViewSet(viewsets.ModelViewSet):
 
 class BookingViewSet(viewsets.ModelViewSet):
     """
-    Provides CRUD for Booking
+    Provides CRUD for Booking and sends booking confirmation email asynchronously
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        booking = serializer.save()
+
+        # Send confirmation email asynchronously using Celery
+        user_email = request.user.email if request.user.is_authenticated else "guest@example.com"
+        booking_details = (
+            f"Booking ID: {booking.id}, "
+            f"Date: {booking.date}, "
+            f"Destination: {booking.destination}"
+        )
+
+        # Trigger Celery task
+        send_booking_confirmation_email.delay(user_email, booking_details)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 # ---------------------- CHAPA PAYMENT INTEGRATION ----------------------
 

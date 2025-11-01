@@ -1,71 +1,104 @@
 
-# alx_travel_app (alx_travel_app_0x02)
+# ALX Travel App 0x03
 
-## Chapa Payment Integration
+This project implements background task management using **Celery** with **RabbitMQ** as the broker, alongside asynchronous email notifications for booking confirmations.
 
-### Setup
-1. Create .env with:
-   - CHAPA_SECRET_KEY
-   - CELERY_BROKER_URL
-   - EMAIL settings
+---
 
-2. Install deps:
+## Setup Instructions
+
+1. **Create `.env` with the following variables:**
+CHAPA_SECRET_KEY=<your-chapa-secret-key>
+CELERY_BROKER_URL=amqp://localhost
+EMAIL_HOST_USER=your-email@example.com
+EMAIL_HOST_PASSWORD=<your-email-password>
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+
+markdown
+Copy code
+
+2. **Install dependencies:**
+```bash
 pip install -r requirements.txt
+Run migrations:
 
-markdown
+bash
 Copy code
-
-3. Run migrations:
 python manage.py migrate
+Start services:
 
-markdown
+bash
 Copy code
-
-4. Start services:
-redis-server
+sudo systemctl start rabbitmq-server
+celery -A alx_travel_app worker --loglevel=info
 python manage.py runserver
-celery -A project_name worker -l info
+Testing
+POST to /api/listings/chapa/initiate/ with booking_id and amount.
 
-markdown
-Copy code
+Open the returned checkout_url and complete the sandbox payment.
 
-### Testing
-- POST to `/api/listings/chapa/initiate/` with `booking_id` and `amount`.
-- Open returned `checkout_url` and complete sandbox payment.
-- Verify via `/api/listings/chapa/verify/?tx_ref=...`
+Verify via /api/listings/chapa/verify/?tx_ref=...
 
-### Notes
-- This repo is `alx_travel_app_0x02` — DO NOT push to `alx_travel_app_0x01`.
-13 — Git: duplicate project and push to alx_travel_app_0x02 (exact commands)
-If you already have alx_travel_app_0x01 locally and want to create alx_travel_app_0x02 with the new changes:
+Notes
+This repo is alx_travel_app_0x03 — DO NOT push to previous versions (alx_travel_app_0x02 or alx_travel_app_0x01).
 
-Clone the original repo (if you only have remote):
+Git Duplication Guide
+If you already have alx_travel_app_0x02 locally and want to create alx_travel_app_0x03 with new Celery + Email features:
+
+Clone the existing project:
 
 bash
 Copy code
-git clone https://github.com/yourusername/alx_travel_app_0x01.git alx_travel_app_0x02
-cd alx_travel_app_0x02
-(Optional) Remove the existing remote origin and create a fresh repo locally:
+git clone https://github.com/<your-username>/alx_travel_app_0x02.git alx_travel_app_0x03
+cd alx_travel_app_0x03
+Remove old remote and set up new GitHub repo:
 
 bash
 Copy code
-# remove origin that points to 0x01
 git remote remove origin
-Create a new GitHub repository named alx_travel_app_0x02 on GitHub (use the website UI). Copy the new repo URL (HTTPS or SSH).
+Create a new repository named alx_travel_app_0x03 on GitHub and copy its URL.
 
-Add the new remote and push:
+Add new origin and push:
 
 bash
 Copy code
-# replace <NEW_REPO_URL> with your alx_travel_app_0x02 URL
-git remote add origin https://github.com/yourusername/alx_travel_app_0x02.git
+git remote add origin https://github.com/<your-username>/alx_travel_app_0x03.git
 git branch -M main
 git push -u origin main
-If you already made changes, commit them before pushing:
+Commit any changes before pushing:
 
 bash
 Copy code
 git add .
-git commit -m "Add Chapa payment integration: Payment model, views, tasks, README"
+git commit -m "Configured Celery with RabbitMQ and added async booking confirmation email task"
 git push origin main
-Important: These commands remove any reference to the old alx_travel_app_0x01 remote, so pushing will go only to alx_travel_app_0x02. Double-check git remote -v to ensure it points to the new repo before pushing.
+✅ Celery and Email Notification Setup
+How to Run Background Tasks
+Start RabbitMQ:
+
+bash
+Copy code
+sudo systemctl start rabbitmq-server
+Start Celery worker:
+
+bash
+Copy code
+celery -A alx_travel_app worker --loglevel=info
+Run Django:
+
+bash
+Copy code
+python manage.py runserver
+Features
+✅ Celery configured with RabbitMQ as message broker
+
+📧 Asynchronous email notification on booking creation
+
+🧪 Console-based email backend for easy local testing
+
+🚀 Step 10: Push to GitHub
+bash
+Copy code
+git add .
+git commit -m "Configured Celery with RabbitMQ and added async booking confirmation email task"
+git push origin main
